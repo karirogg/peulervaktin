@@ -21,10 +21,10 @@ connection = MySQLdb.connect(
   user=os.getenv("USERNAME"),
   passwd= os.getenv("PASSWORD"),
   db= os.getenv("DATABASE"),
-  ssl_mode = "VERIFY_IDENTITY",
-  ssl      = {
-    "ca": "/etc/ssl/cert.pem"
-  }
+#  ssl_mode = "VERIFY_IDENTITY",
+#  ssl      = {
+#    "ca": "/etc/ssl/cert.pem"
+#  }
 )
 
 cursor = connection.cursor()

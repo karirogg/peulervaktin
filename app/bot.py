@@ -8,6 +8,8 @@ import discord
 from dotenv import load_dotenv
 # from discord.ext import tasks
 
+print("Initialization")
+
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
