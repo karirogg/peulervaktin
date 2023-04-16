@@ -62,7 +62,7 @@ def get_updates():
             # response = requests.post("https://karirogg--peulbot-predict.modal.run",data = payload)
             # data_dict = response.json()
 
-            captcha_prediction = predict(base64str)
+            captcha_prediction, probs = predict(base64str)
 
             driver.find_element(By.XPATH,'//input[@id="username"]').send_keys(os.getenv("PEULER_USERNAME"))
             driver.find_element(By.XPATH,'//input[@id="password"]').send_keys(os.getenv("PEULER_PASSWORD"))
@@ -74,17 +74,19 @@ def get_updates():
 
             warnings = driver.find_elements(By.XPATH, '//p[@class="warning"]')
 
+            correct = 0
             if len(warnings) == 0:
                 # cursor.execute('INSERT INTO CorrectlyClassified (img, prediction) VALUES (%s, %s)', (base64str, captcha_prediction))
                 cv2.imwrite(f'../correct/{captcha_prediction}.png', im)
-                break
-            
-            number = np.arange(10)
-            digits = np.arange(1,6)
-            # confidence = [f"confidence_digit_{j}_number_{i}" for i in number for j in digits]
+                correct = 1
+            else:
+                cv2.imwrite(f'../incorrect/{captcha_prediction}.png', im)
 
-            # cursor.execute(f"INSERT INTO IncorrectlyClassified (img, prediction, {", ".join(confidence)}) VALUES (%s, %s, {})", (base64str, captcha_prediction, *confidence_values)
-            cv2.imwrite(f'../incorrect/{captcha_prediction}.png', im)
+            cursor.executemany('INSERT INTO Classifications (prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s)', [(captcha_prediction, int(i), int(j), float(probs[i][j]), correct) for i in range(4) for j in range(10)])
+
+            if correct == 1:
+                break
+
 
         driver.find_element(By.XPATH, '//a[@href="friends"]').click()
 

@@ -161,4 +161,6 @@ def predict(base64str):
 
     preds = torch.argmax(output, dim=1)
 
-    return "".join(np.array(preds, dtype=str))
+    probs = torch.exp(output).data.max(1, keepdim=True)[0]
+
+    return "".join(np.array(preds, dtype=str)), torch.exp(output)
