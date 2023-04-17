@@ -82,7 +82,7 @@ def get_updates():
             else:
                 cv2.imwrite(f'../incorrect/{captcha_prediction}.png', im)
 
-            cursor.executemany('INSERT INTO Classifications (prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s)', [(captcha_prediction, int(i), int(j), float(probs[i][j]), correct) for i in range(4) for j in range(10)])
+            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s)', [(captcha_prediction, int(i), int(j), float(probs[i][j]), correct) for i in range(5) for j in range(10)])
 
             if correct == 1:
                 break
@@ -139,3 +139,5 @@ def get_updates():
     connection.commit()
 
     return out
+
+# 93837
