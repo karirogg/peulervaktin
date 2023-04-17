@@ -41,6 +41,9 @@ def get_updates():
         cursor.execute('SELECT MAX(id) FROM Classifications')
         max_id = cursor.fetchall()[0][0]
 
+        if max_id is None:
+            max_id = 0
+
         while True:
             max_id += 1
 
