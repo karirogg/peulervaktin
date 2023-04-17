@@ -43,7 +43,7 @@ def get_updates():
         max_id = cursor.fetchall()[0][0]
 
         while True:
-            max_id += 1
+            # max_id += 1
 
             element = driver.find_elements(By.XPATH,'//img[@id="captcha_image"]')[0]
 
