@@ -38,7 +38,12 @@ def get_updates():
     with webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options) as driver: 	
         driver.get(url)
 
+        cursor.execute('SELECT MAX(id) FROM Classifications')
+        max_id = cursor.fetchall()[0][0]
+
         while True:
+            max_id += 1
+
             element = driver.find_elements(By.XPATH,'//img[@id="captcha_image"]')[0]
 
             with open('../store/img.png', 'wb') as f:
@@ -77,12 +82,12 @@ def get_updates():
             correct = 0
             if len(warnings) == 0:
                 # cursor.execute('INSERT INTO CorrectlyClassified (img, prediction) VALUES (%s, %s)', (base64str, captcha_prediction))
-                cv2.imwrite(f'../correct/{captcha_prediction}.png', im)
+                cv2.imwrite(f'../correct/{max_id}.png', im)
                 correct = 1
             else:
-                cv2.imwrite(f'../incorrect/{captcha_prediction}.png', im)
+                cv2.imwrite(f'../incorrect/{max_id}.png', im)
 
-            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s)', [(captcha_prediction, int(i), int(j), float(probs[i][j]), correct) for i in range(5) for j in range(10)])
+            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(max_id, captcha_prediction, int(i), int(j), float(probs[i][j]), correct) for i in range(5) for j in range(10)])
 
             if correct == 1:
                 break
