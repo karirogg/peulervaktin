@@ -8,6 +8,7 @@ from PIL import Image
 import base64
 import cv2
 import numpy as np
+import random
 
 from prediction import predict
 
@@ -40,9 +41,6 @@ def get_updates():
 
         cursor.execute('SELECT MAX(id) FROM Classifications')
         max_id = cursor.fetchall()[0][0]
-
-        if max_id is None:
-            max_id = 0
 
         while True:
             max_id += 1
@@ -82,15 +80,16 @@ def get_updates():
 
             warnings = driver.find_elements(By.XPATH, '//p[@class="warning"]')
 
+            new_id = random.randint(0, 1000000000)
+
             correct = 0
             if len(warnings) == 0:
                 # cursor.execute('INSERT INTO CorrectlyClassified (img, prediction) VALUES (%s, %s)', (base64str, captcha_prediction))
-                cv2.imwrite(f'../correct/{max_id}.png', im)
                 correct = 1
-            else:
-                cv2.imwrite(f'../incorrect/{max_id}.png', im)
 
-            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(max_id, captcha_prediction, int(i), int(j), float(probs[i][j]), correct) for i in range(5) for j in range(10)])
+            cv2.imwrite(f'../images/{new_id}.png', im)
+
+            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(new_id, captcha_prediction, int(i), int(j), float(probs[i][j]), correct) for i in range(5) for j in range(10)])
 
             if correct == 1:
                 break
