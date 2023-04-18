@@ -95,7 +95,9 @@ def get_updates():
             time.sleep(2)
 
             res = None
-            while res is None:
+            count = 0
+            while res is None and count < 5:
+                count += 1
                 try:
                     res = cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(new_id, captcha_prediction, int(i), int(j), float(probs[i][j]), correct) for i in range(5) for j in range(10)])
                     print(res)
