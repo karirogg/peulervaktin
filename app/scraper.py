@@ -94,8 +94,11 @@ def get_updates():
 
             time.sleep(2)
 
-            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(new_id, captcha_prediction, int(i), int(j), float(probs[i][j]), correct) for i in range(5) for j in range(5)])
-            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(new_id, captcha_prediction, int(i), int(j), float(probs[i][j]), correct) for i in range(5) for j in range(5,10)])
+            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(new_id, captcha_prediction, int(0), int(j), round(float(probs[0][j]), 4), correct) for j in range(10)])
+            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(new_id, captcha_prediction, int(1), int(j), round(float(probs[1][j]), 4), correct) for j in range(10)])
+            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(new_id, captcha_prediction, int(2), int(j), round(float(probs[2][j]), 4), correct) for j in range(10)])
+            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(new_id, captcha_prediction, int(3), int(j), round(float(probs[3][j]), 4), correct) for j in range(10)])
+            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(new_id, captcha_prediction, int(4), int(j), round(float(probs[4][j]), 4), correct) for j in range(10)])
 
             if correct == 1:
                 break
