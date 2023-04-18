@@ -90,7 +90,7 @@ def get_updates():
             cv2.imwrite(f'../images/{new_id}.png', im)
 
             cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(new_id, captcha_prediction, int(i), int(j), float(probs[i][j]), correct) for i in range(5) for j in range(10)])
-
+            time.sleep(2)
             if correct == 1:
                 break
 
