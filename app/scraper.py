@@ -16,17 +16,20 @@ from dotenv import load_dotenv
 load_dotenv()
 import os
 import MySQLdb
+import sqlite3
 
-connection = MySQLdb.connect(
-  host= os.getenv("HOST"),
-  user=os.getenv("USERNAME"),
-  passwd= os.getenv("PASSWORD"),
-  db= os.getenv("DATABASE"),
-#  ssl_mode = "VERIFY_IDENTITY",
-#  ssl      = {
-#    "ca": "/etc/ssl/cert.pem"
-#  }
-)
+# connection = MySQLdb.connect(
+#   host= os.getenv("HOST"),
+#   user=os.getenv("USERNAME"),
+#   passwd= os.getenv("PASSWORD"),
+#   db= os.getenv("DATABASE"),
+# #  ssl_mode = "VERIFY_IDENTITY",
+# #  ssl      = {
+# #    "ca": "/etc/ssl/cert.pem"
+# #  }
+# )
+
+connection = sqlite3.connect('test.db')
 
 cursor = connection.cursor()
 
@@ -94,12 +97,8 @@ def get_updates():
 
             time.sleep(2)
 
-            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(new_id, captcha_prediction, int(0), int(j), round(float(probs[0][j]), 4), correct) for j in range(10)])
-            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(new_id, captcha_prediction, int(1), int(j), round(float(probs[1][j]), 4), correct) for j in range(10)])
-            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(new_id, captcha_prediction, int(2), int(j), round(float(probs[2][j]), 4), correct) for j in range(10)])
-            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(new_id, captcha_prediction, int(3), int(j), round(float(probs[3][j]), 4), correct) for j in range(10)])
-            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (%s, %s, %s, %s, %s, %s)', [(new_id, captcha_prediction, int(4), int(j), round(float(probs[4][j]), 4), correct) for j in range(10)])
-
+            cursor.executemany('INSERT INTO Classifications (id, prediction, number, digit, probability, correct) VALUES (?, ?, ?, ?, ?, ?)', [(new_id, captcha_prediction, int(i), int(j), round(float(probs[i][j]), i), correct) for i in range(5) for j in range(10)])
+        
             if correct == 1:
                 break
 
@@ -142,7 +141,7 @@ def get_updates():
 
             new_solved = list(set(solved_problems) - set(db_solved))
 
-            cursor.executemany('INSERT INTO problems (username, problem) VALUES (%s, %s)', [(username, problem) for problem in new_solved])
+            cursor.executemany('INSERT INTO problems (username, problem) VALUES (?, ?)', [(username, problem) for problem in new_solved])
 
             if len(new_solved) > 0:
                 greeting = f"{username} var að leysa dæmi {new_solved[0]}! 🫡🐐"
@@ -152,7 +151,7 @@ def get_updates():
 
                 out.append(greeting)
         
-    connection.commit()
+            connection.commit()
 
     return out
 
