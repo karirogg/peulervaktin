@@ -85,7 +85,10 @@ def get_updates():
             correct = 0
             if len(warnings) == 0:
                 # cursor.execute('INSERT INTO CorrectlyClassified (img, prediction) VALUES (%s, %s)', (base64str, captcha_prediction))
+                cv2.imwrite(f'../correct/{new_id}.png', im)
                 correct = 1
+            else:
+                cv2.imwrite(f'../incorrect/{new_id}.png', im)
 
             cv2.imwrite(f'../images/{new_id}.png', im)
 
